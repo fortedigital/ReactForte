@@ -30,8 +30,7 @@ services.AddReact(_configuration, _webHostingEnvironment.ContentRootPath);
 app.UseReact(config =>
     {
         ...       
-    });
-			
+    });		
 ```
 More info https://reactjs.net/tutorials/aspnetcore.html
 
