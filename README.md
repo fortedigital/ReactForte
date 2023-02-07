@@ -7,22 +7,22 @@ ForteReact has two options to render components:
 
 ## How to run
 
-1. Add WebpackOptions to appsettings
+### 1. Add WebpackOptions to appsettings
 
-For Development 
+#### For Development 
 
   "Webpack": {
     "OutputPath": "http://localhost:8080"
   }
 
-For Production
+#### For Production
   "Webpack": {
     "OutputPath": "./path/to/output"
   }
 
-2. Modify Startup.cs
+### 2. Modify Startup.cs
 
-For ReactJS.NET
+#### For ReactJS.NET
 `services.AddReact(_configuration, _webHostingEnvironment.ContentRootPath);`
 ``` 
 app.UseReact(config =>
@@ -33,7 +33,7 @@ app.UseReact(config =>
 ```
 More info https://reactjs.net/tutorials/aspnetcore.html
 
-For Wrapper 
+#### For Wrapper 
 
 `services.AddReact(_configuration, _webHostingEnvironment.ContentRootPath, options => {...})`
 ```
