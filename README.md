@@ -25,7 +25,8 @@ ForteReact has two options to render components:
 #### For ReactJS.NET
 ```
 services.AddReact(_configuration, _webHostingEnvironment.ContentRootPath);
--------------
+```
+```
 app.UseReact(config =>
     {
         ...       
@@ -36,7 +37,9 @@ More info https://reactjs.net/tutorials/aspnetcore.html
 
 #### For Wrapper 
 
-```services.AddReact(_configuration, _webHostingEnvironment.ContentRootPath, options => {...})
--------------
+```
+services.AddReact(_configuration, _webHostingEnvironment.ContentRootPath, options => {...})
+```
+```
 app.UseReact(FilesToInclude, new Version("x.x.x"));
 ```
