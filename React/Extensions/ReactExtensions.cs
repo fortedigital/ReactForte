@@ -9,8 +9,6 @@ using JavaScriptEngineSwitcher.V8;
 using React.AspNet;
 using Jering.Javascript.NodeJS;
 using React.Services;
-using Microsoft.Extensions.Options;
-using ReactForte.Application.Webpack;
 using Microsoft.AspNetCore.Http;
 
 namespace React.Extensions;
@@ -18,25 +16,19 @@ namespace React.Extensions;
 public static class ReactExtensions
 {
     public static void AddReact(
-        this IServiceCollection services, IConfiguration configuration,
-        string rootPath)
+        this IServiceCollection services)
     {
         services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         ReactServiceCollectionExtensions.AddReact(services);
         services.AddScoped<IReactService, ReactDotNetService>();
         services.AddJsEngineSwitcher(options => options.DefaultEngineName = V8JsEngine.EngineName)
             .AddV8();
-
-        services.Configure<WebpackOptions>(configuration.GetSection("Webpack"));
-        services.AddSingleton(provider =>
-            new WebpackManifest(provider.GetRequiredService<IOptions<WebpackOptions>>(), rootPath));
     }
 
     public static void AddReact(
-        this IServiceCollection services, IConfiguration configuration,
-        string rootPath, Action<NodeJSProcessOptions> configureNodeJs)
+        this IServiceCollection services, Action<NodeJSProcessOptions> configureNodeJs)
     {
-        ReactForteExtensions.AddReact(services, configuration, rootPath, configureNodeJs);
+        ReactForteExtensions.AddReact(services, configureNodeJs);
 
         services.AddScoped<IReactService, ReactForteService>();
     }

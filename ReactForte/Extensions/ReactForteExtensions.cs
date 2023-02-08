@@ -9,7 +9,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using ReactForte.Application;
-using ReactForte.Application.Webpack;
 using ReactForte.Infrastructure;
 
 namespace ReactForte.Extensions;
@@ -17,7 +16,7 @@ namespace ReactForte.Extensions;
 public static class ReactForteExtensions
 {
     public static void AddReact(
-        this IServiceCollection services, IConfiguration configuration, string rootPath, Action<NodeJSProcessOptions>? configureNodeJs = null)
+        this IServiceCollection services, Action<NodeJSProcessOptions>? configureNodeJs = null)
     {
         services.AddNodeJS();
 
@@ -32,10 +31,6 @@ public static class ReactForteExtensions
         services.AddSingleton<Config>();
         services.AddScoped<IReactService, ReactService>();
         services.AddScoped<IHtmlService, HtmlService>();
-
-        services.Configure<WebpackOptions>(configuration.GetSection("Webpack"));
-        services.AddSingleton(provider =>
-            new WebpackManifest(provider.GetRequiredService<IOptions<WebpackOptions>>(), rootPath));
     }
 
     public static void UseReact(
