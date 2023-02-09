@@ -10,6 +10,7 @@ using React.AspNet;
 using Jering.Javascript.NodeJS;
 using React.Services;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
 namespace React.Extensions;
 
@@ -20,7 +21,10 @@ public static class ReactExtensions
     {
         services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         ReactServiceCollectionExtensions.AddReact(services);
-        services.AddScoped<IReactService, ReactDotNetService>();
+
+        services.AddScoped<ReactDotNetService>();
+        services.AddScoped<IReactService>(provider =>
+            new ReactServiceMethodExecutionTimeDecorator(provider.GetRequiredService<ReactDotNetService>(), provider.GetRequiredService<ILogger<ReactServiceMethodExecutionTimeDecorator>>()));
         services.AddJsEngineSwitcher(options => options.DefaultEngineName = V8JsEngine.EngineName)
             .AddV8();
     }
@@ -30,7 +34,9 @@ public static class ReactExtensions
     {
         ReactForteExtensions.AddReact(services, configureNodeJs);
 
-        services.AddScoped<IReactService, ReactForteService>();
+        services.AddScoped<ReactForteService>();
+        services.AddScoped<IReactService>(provider =>
+            new ReactServiceMethodExecutionTimeDecorator(provider.GetRequiredService<ReactForteService>(), provider.GetRequiredService<ILogger<ReactServiceMethodExecutionTimeDecorator>>()));
     }
 
     public static void UseReact(
