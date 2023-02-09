@@ -14,29 +14,62 @@ using Microsoft.Extensions.Logging;
 
 namespace React.Extensions;
 
+public class ReactOptions
+{
+    public bool EnableExecutionTimeReactServiceRenderToStringAsync { get; set; } = false;
+}
+
 public static class ReactExtensions
 {
     public static void AddReact(
-        this IServiceCollection services)
+        this IServiceCollection services, Action<ReactOptions> configureReact)
     {
         services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         ReactServiceCollectionExtensions.AddReact(services);
 
-        services.AddScoped<ReactDotNetService>();
-        services.AddScoped<IReactService>(provider =>
-            new ReactServiceMethodExecutionTimeDecorator(provider.GetRequiredService<ReactDotNetService>(), provider.GetRequiredService<ILogger<ReactServiceMethodExecutionTimeDecorator>>()));
+        var reactOptions = new ReactOptions();
+
+        configureReact(reactOptions);
+
+        if (reactOptions.EnableExecutionTimeReactServiceRenderToStringAsync)
+        {
+            services.AddScoped<ReactDotNetService>();
+            services.AddScoped<IReactService>(provider =>
+                new ExecutionTimeReactServiceRenderToStringAsyncDecorator(
+                    provider.GetRequiredService<ReactDotNetService>(),
+                    provider.GetRequiredService<ILogger<ExecutionTimeReactServiceRenderToStringAsyncDecorator>>()));
+        }
+        else
+        {
+            services.AddScoped<IReactService, ReactDotNetService>();
+        }
+
         services.AddJsEngineSwitcher(options => options.DefaultEngineName = V8JsEngine.EngineName)
             .AddV8();
     }
 
     public static void AddReact(
-        this IServiceCollection services, Action<NodeJSProcessOptions> configureNodeJs)
+        this IServiceCollection services, Action<ReactOptions> configureReact,
+        Action<NodeJSProcessOptions> configureNodeJs)
     {
         ReactForteExtensions.AddReact(services, configureNodeJs);
 
-        services.AddScoped<ReactForteService>();
-        services.AddScoped<IReactService>(provider =>
-            new ReactServiceMethodExecutionTimeDecorator(provider.GetRequiredService<ReactForteService>(), provider.GetRequiredService<ILogger<ReactServiceMethodExecutionTimeDecorator>>()));
+        var reactOptions = new ReactOptions();
+
+        configureReact(reactOptions);
+
+        if (reactOptions.EnableExecutionTimeReactServiceRenderToStringAsync)
+        {
+            services.AddScoped<ReactForteService>();
+            services.AddScoped<IReactService>(provider =>
+                new ExecutionTimeReactServiceRenderToStringAsyncDecorator(
+                    provider.GetRequiredService<ReactForteService>(),
+                    provider.GetRequiredService<ILogger<ExecutionTimeReactServiceRenderToStringAsyncDecorator>>()));
+        }
+        else
+        {
+            services.AddScoped<IReactService, ReactForteService>();
+        }
     }
 
     public static void UseReact(
