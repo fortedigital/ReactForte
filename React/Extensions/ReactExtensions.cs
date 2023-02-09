@@ -16,7 +16,7 @@ namespace React.Extensions;
 
 public class ReactOptions
 {
-    public bool EnableExecutionTimeReactServiceRenderToStringAsync { get; set; } = false;
+    public bool EnableLoggingExecutionTimeReactServiceRenderToStringAsync { get; set; } = false;
 }
 
 public static class ReactExtensions
@@ -31,7 +31,7 @@ public static class ReactExtensions
 
         configureReact(reactOptions);
 
-        if (reactOptions.EnableExecutionTimeReactServiceRenderToStringAsync)
+        if (reactOptions.EnableLoggingExecutionTimeReactServiceRenderToStringAsync)
         {
             services.AddScoped<ReactDotNetService>();
             services.AddScoped<IReactService>(provider =>
@@ -58,7 +58,7 @@ public static class ReactExtensions
 
         configureReact(reactOptions);
 
-        if (reactOptions.EnableExecutionTimeReactServiceRenderToStringAsync)
+        if (reactOptions.EnableLoggingExecutionTimeReactServiceRenderToStringAsync)
         {
             services.AddScoped<ReactForteService>();
             services.AddScoped<IReactService>(provider =>
