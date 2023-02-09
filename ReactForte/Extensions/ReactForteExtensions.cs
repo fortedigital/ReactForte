@@ -20,13 +20,9 @@ public static class ReactForteExtensions
     {
         services.AddNodeJS();
 
-        var fullFilePath = Path.GetDirectoryName(
-            Assembly.GetExecutingAssembly().GetName().CodeBase)?[6..] ?? string.Empty;
-
         services.Configure<NodeJSProcessOptions>(options =>
         {
             configureNodeJs?.Invoke(options);
-            options.ProjectPath = fullFilePath;
         });
         services.AddSingleton<Config>();
         services.AddScoped<IReactService, ReactService>();
