@@ -16,7 +16,7 @@ internal class ReactDotNetService : IReactService
 
     public async Task<IHtmlContent> RenderToStringAsync<T>(string componentName, T props)
     {
-        return _htmlHelper.React(componentName, props);
+        return await Task.FromResult(_htmlHelper.React(componentName, props));
     }
 
     public IHtmlContent InitJavascript()

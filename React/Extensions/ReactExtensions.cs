@@ -9,8 +9,14 @@ using React.AspNet;
 using Jering.Javascript.NodeJS;
 using React.Services;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
 namespace React.Extensions;
+
+public class ReactOptions
+{
+    public bool EnableLoggingExecutionTimeReactServiceRenderToStringAsync { get; set; } = false;
+}
 
 public static class ReactExtensions
 {
@@ -18,7 +24,24 @@ public static class ReactExtensions
     {
         services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         ReactServiceCollectionExtensions.AddReact(services);
-        services.AddScoped<IReactService, ReactDotNetService>();
+
+        var reactOptions = new ReactOptions();
+
+        configureReact(reactOptions);
+
+        if (reactOptions.EnableLoggingExecutionTimeReactServiceRenderToStringAsync)
+        {
+            services.AddScoped<ReactDotNetService>();
+            services.AddScoped<IReactService>(provider =>
+                new ExecutionTimeReactServiceRenderToStringAsyncDecorator(
+                    provider.GetRequiredService<ReactDotNetService>(),
+                    provider.GetRequiredService<ILogger<ExecutionTimeReactServiceRenderToStringAsyncDecorator>>()));
+        }
+        else
+        {
+            services.AddScoped<IReactService, ReactDotNetService>();
+        }
+
         services.AddJsEngineSwitcher(options => options.DefaultEngineName = V8JsEngine.EngineName)
             .AddV8();
     }
@@ -28,17 +51,32 @@ public static class ReactExtensions
     {
         ReactForteExtensions.AddReact(services, configureNodeJs);
 
-        services.AddScoped<IReactService, ReactForteService>();
+        var reactOptions = new ReactOptions();
+
+        configureReact(reactOptions);
+
+        if (reactOptions.EnableLoggingExecutionTimeReactServiceRenderToStringAsync)
+        {
+            services.AddScoped<ReactForteService>();
+            services.AddScoped<IReactService>(provider =>
+                new ExecutionTimeReactServiceRenderToStringAsyncDecorator(
+                    provider.GetRequiredService<ReactForteService>(),
+                    provider.GetRequiredService<ILogger<ExecutionTimeReactServiceRenderToStringAsyncDecorator>>()));
+        }
+        else
+        {
+            services.AddScoped<IReactService, ReactForteService>();
+        }
+    }
+
+    public static void UseReact(this IApplicationBuilder app, Action<IReactSiteConfiguration> configure)
+    {
+        ReactBuilderExtensions.UseReact(app, configure);
     }
 
     public static void UseReact(this IApplicationBuilder app, IEnumerable<string> scriptUrls, Version reactVersion,
         bool disableServerSideRendering = false)
     {
         ReactForteExtensions.UseReact(app, scriptUrls, reactVersion, disableServerSideRendering);
-    }
-
-    public static void UseReact(this IApplicationBuilder app, Action<IReactSiteConfiguration> configure)
-    {
-        ReactBuilderExtensions.UseReact(app, configure);
     }
 }
