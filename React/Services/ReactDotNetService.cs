@@ -7,13 +7,20 @@ namespace React.Services;
 
 internal class ReactDotNetService : IReactService
 {
-    public async Task<IHtmlContent> RenderToStringAsync<T>(IHtmlHelper htmlHelper, string componentName, T props)
+    private readonly IHtmlHelper _htmlHelper;
+
+    public ReactDotNetService(IHtmlHelper htmlHelper)
     {
-        return htmlHelper.React(componentName, props);
+        _htmlHelper = htmlHelper;
     }
 
-    public IHtmlContent InitJavascript(IHtmlHelper htmlHelper)
+    public async Task<IHtmlContent> RenderToStringAsync<T>(string componentName, T props)
     {
-        return htmlHelper.ReactInitJavaScript();
+        return _htmlHelper.React(componentName, props);
+    }
+
+    public IHtmlContent InitJavascript()
+    {
+        return _htmlHelper.ReactInitJavaScript();
     }
 }

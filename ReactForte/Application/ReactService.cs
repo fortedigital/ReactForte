@@ -53,9 +53,12 @@ internal class ReactService : IReactService
         var currentAssembly = typeof(ReactService).Assembly;
         var renderToStringScriptManifestName = currentAssembly.GetManifestResourceNames().Single();
 
-        Stream ModuleFactory() => currentAssembly.GetManifestResourceStream(renderToStringScriptManifestName) ??
-                                  throw new InvalidOperationException(
-                                      $"Can not get manifest resource stream with name - {renderToStringScriptManifestName}");
+        Stream ModuleFactory()
+        {
+            return currentAssembly.GetManifestResourceStream(renderToStringScriptManifestName) ??
+                   throw new InvalidOperationException(
+                       $"Can not get manifest resource stream with name - {renderToStringScriptManifestName}");
+        }
 
         var result = await _nodeJsService.InvokeFromStreamAsync<string>(ModuleFactory,
             RenderToStringCacheIdentifier,
@@ -82,10 +85,15 @@ internal class ReactService : IReactService
         return $"<script>{string.Join("", componentInitiation)}</script>";
     }
 
-    private string GetElementById(string containerId) => $"document.getElementById(\"{containerId}\")";
+    private string GetElementById(string containerId)
+    {
+        return $"document.getElementById(\"{containerId}\")";
+    }
 
-    private string CreateElement(Component component) =>
-        $"React.createElement({component.Name}, {JsonSerializer.Serialize(component.Props, _serializeOptions)})";
+    private string CreateElement(Component component)
+    {
+        return $"React.createElement({component.Name}, {JsonSerializer.Serialize(component.Props, _serializeOptions)})";
+    }
 
 
     private string Render(Component component)

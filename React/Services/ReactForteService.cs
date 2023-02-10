@@ -14,12 +14,12 @@ internal class ReactForteService : IReactService
         _htmlService = htmlService;
     }
 
-    public async Task<IHtmlContent> RenderToStringAsync<T>(IHtmlHelper htmlHelper, string componentName, T props)
+    public async Task<IHtmlContent> RenderToStringAsync<T>( string componentName, T props)
     {
         return await _htmlService.ReactAsync(componentName, props);
     }
 
-    public IHtmlContent InitJavascript(IHtmlHelper htmlHelper)
+    public IHtmlContent InitJavascript()
     {
         return _htmlService.InitJavascript();
     }
