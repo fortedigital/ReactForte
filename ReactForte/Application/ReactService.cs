@@ -25,8 +25,7 @@ internal class ReactService : IReactService
 
     private readonly JsonSerializerOptions _serializeOptions = new()
     {
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        WriteIndented = true
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
 
     public ReactService(INodeJSService nodeJsService, Config config)
