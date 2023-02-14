@@ -23,8 +23,8 @@ internal class ExecutionTimeReactServiceRenderToStringAsyncDecorator : IReactSer
         var renderedString = await _service.RenderToStringAsync(componentName, props);
         var elapsedMs = watch.ElapsedMilliseconds;
 
-        _logger.Log(LogLevel.Debug, "{methodName} for component {componentName} lasted: {elapsedMs}ms",
-            nameof(RenderToStringAsync), componentName, elapsedMs);
+        _logger.Log(LogLevel.Debug, "{implementation} - {methodName} for component {componentName} lasted: {elapsedMs}ms",
+            _service.GetType().Name, nameof(RenderToStringAsync), componentName, elapsedMs);
 
         return renderedString;
     }
