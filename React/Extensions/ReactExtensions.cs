@@ -7,10 +7,10 @@ using JavaScriptEngineSwitcher.Extensions.MsDependencyInjection;
 using JavaScriptEngineSwitcher.V8;
 using React.AspNet;
 using Jering.Javascript.NodeJS;
-using Microsoft.ApplicationInsights;
 using React.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using React.Abstraction;
 
 namespace React.Extensions;
 
@@ -21,7 +21,9 @@ public class ReactOptions
 
 public static class ReactExtensions
 {
-    public static void AddReact(this IServiceCollection services, Action<ReactOptions> configureReact)
+    public static void AddReact(this IServiceCollection services, 
+        Action<ReactOptions> configureReact, 
+        ILatencyMetricSender latencyMetricSender)
     {
         services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         ReactServiceCollectionExtensions.AddReact(services);
@@ -37,7 +39,7 @@ public static class ReactExtensions
                 new ExecutionTimeReactServiceRenderToStringAsyncDecorator(
                     provider.GetRequiredService<ReactDotNetService>(),
                     provider.GetRequiredService<ILogger<ExecutionTimeReactServiceRenderToStringAsyncDecorator>>(),
-                    provider.GetRequiredService<TelemetryClient>()));
+                    latencyMetricSender));
         }
         else
         {
@@ -48,8 +50,10 @@ public static class ReactExtensions
             .AddV8();
     }
 
-    public static void AddReact(this IServiceCollection services, Action<ReactOptions> configureReact,
-        Action<NodeJSProcessOptions> configureNodeJs)
+    public static void AddReact(this IServiceCollection services, 
+        Action<ReactOptions> configureReact,
+        Action<NodeJSProcessOptions> configureNodeJs, 
+        ILatencyMetricSender latencyMetricSender)
     {
         ReactForteExtensions.AddReact(services, configureNodeJs);
 
@@ -64,7 +68,7 @@ public static class ReactExtensions
                 new ExecutionTimeReactServiceRenderToStringAsyncDecorator(
                     provider.GetRequiredService<ReactForteService>(),
                     provider.GetRequiredService<ILogger<ExecutionTimeReactServiceRenderToStringAsyncDecorator>>(),
-                    provider.GetRequiredService<TelemetryClient>()));
+                    latencyMetricSender));
         }
         else
         {
