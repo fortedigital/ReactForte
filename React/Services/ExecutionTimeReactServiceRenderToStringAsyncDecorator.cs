@@ -31,16 +31,16 @@ internal class ExecutionTimeReactServiceRenderToStringAsyncDecorator : IReactSer
         _logger.Log(LogLevel.Debug, "{methodName} for component {componentName} lasted: {elapsedMs}ms",
             nameof(RenderToStringAsync), componentName, elapsedMs);
 
-        TrackLatencyMetric<T>(elapsedMs);
+        TrackLatencyMetric(nameof(RenderToStringAsync), elapsedMs);
 
         return renderedString;
     }
 
-    private void TrackLatencyMetric<T>(long elapsedMs)
+    private void TrackLatencyMetric(string name, long elapsedMs)
     {
         var latency = new MetricTelemetry
         {
-            Name = $"{nameof(RenderToStringAsync)}Latency",
+            Name = $"{name}Latency",
             Sum = elapsedMs
         };
         _telemetry.TrackMetric(latency);
