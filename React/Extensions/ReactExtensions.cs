@@ -21,7 +21,7 @@ public class ReactOptions
 
 public static class ReactExtensions
 {
-    public static void AddReact(this IServiceCollection services, 
+    public static void AddReactJsDotNet(this IServiceCollection services, 
         Action<ReactOptions> configureReact, 
         ILatencyMetricSender latencyMetricSender)
     {
@@ -50,7 +50,7 @@ public static class ReactExtensions
             .AddV8();
     }
 
-    public static void AddReact(this IServiceCollection services, 
+    public static void AddReactForte(this IServiceCollection services, 
         Action<ReactOptions> configureReact,
         Action<NodeJSProcessOptions> configureNodeJs, 
         ILatencyMetricSender latencyMetricSender)
@@ -76,12 +76,12 @@ public static class ReactExtensions
         }
     }
 
-    public static void UseReact(this IApplicationBuilder app, Action<IReactSiteConfiguration> configure)
+    public static void UseReactJsDotNet(this IApplicationBuilder app, Action<IReactSiteConfiguration> configure)
     {
         ReactBuilderExtensions.UseReact(app, configure);
     }
 
-    public static void UseReact(this IApplicationBuilder app, IEnumerable<string> scriptUrls, Version reactVersion,
+    public static void UseReactForte(this IApplicationBuilder app, IEnumerable<string> scriptUrls, Version reactVersion,
         bool disableServerSideRendering = false)
     {
         ReactForteExtensions.UseReact(app, scriptUrls, reactVersion, disableServerSideRendering);
