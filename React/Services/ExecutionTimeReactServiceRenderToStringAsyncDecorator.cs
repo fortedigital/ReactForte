@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Html;
 using System.Threading.Tasks;
+using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.Extensions.Logging;
 
 namespace React.Services;
@@ -9,12 +11,15 @@ internal class ExecutionTimeReactServiceRenderToStringAsyncDecorator : IReactSer
 {
     private readonly IReactService _service;
     private readonly ILogger<ExecutionTimeReactServiceRenderToStringAsyncDecorator> _logger;
+    private readonly TelemetryClient _telemetry;
 
     public ExecutionTimeReactServiceRenderToStringAsyncDecorator(IReactService service,
-        ILogger<ExecutionTimeReactServiceRenderToStringAsyncDecorator> logger)
+        ILogger<ExecutionTimeReactServiceRenderToStringAsyncDecorator> logger,
+        TelemetryClient telemetry)
     {
         _service = service;
         _logger = logger;
+        _telemetry = telemetry;
     }
 
     public async Task<IHtmlContent> RenderToStringAsync<T>(string componentName, T props)
@@ -26,7 +31,19 @@ internal class ExecutionTimeReactServiceRenderToStringAsyncDecorator : IReactSer
         _logger.Log(LogLevel.Debug, "{methodName} for component {componentName} lasted: {elapsedMs}ms",
             nameof(RenderToStringAsync), componentName, elapsedMs);
 
+        TrackLatencyMetric<T>(elapsedMs);
+
         return renderedString;
+    }
+
+    private void TrackLatencyMetric<T>(long elapsedMs)
+    {
+        var latency = new MetricTelemetry
+        {
+            Name = $"{nameof(RenderToStringAsync)}Latency",
+            Sum = elapsedMs
+        };
+        _telemetry.TrackMetric(latency);
     }
 
     public IHtmlContent InitJavascript()

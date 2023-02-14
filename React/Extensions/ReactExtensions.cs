@@ -7,6 +7,7 @@ using JavaScriptEngineSwitcher.Extensions.MsDependencyInjection;
 using JavaScriptEngineSwitcher.V8;
 using React.AspNet;
 using Jering.Javascript.NodeJS;
+using Microsoft.ApplicationInsights;
 using React.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -35,7 +36,8 @@ public static class ReactExtensions
             services.AddScoped<IReactService>(provider =>
                 new ExecutionTimeReactServiceRenderToStringAsyncDecorator(
                     provider.GetRequiredService<ReactDotNetService>(),
-                    provider.GetRequiredService<ILogger<ExecutionTimeReactServiceRenderToStringAsyncDecorator>>()));
+                    provider.GetRequiredService<ILogger<ExecutionTimeReactServiceRenderToStringAsyncDecorator>>(),
+                    provider.GetRequiredService<TelemetryClient>()));
         }
         else
         {
@@ -61,7 +63,8 @@ public static class ReactExtensions
             services.AddScoped<IReactService>(provider =>
                 new ExecutionTimeReactServiceRenderToStringAsyncDecorator(
                     provider.GetRequiredService<ReactForteService>(),
-                    provider.GetRequiredService<ILogger<ExecutionTimeReactServiceRenderToStringAsyncDecorator>>()));
+                    provider.GetRequiredService<ILogger<ExecutionTimeReactServiceRenderToStringAsyncDecorator>>(),
+                    provider.GetRequiredService<TelemetryClient>()));
         }
         else
         {
