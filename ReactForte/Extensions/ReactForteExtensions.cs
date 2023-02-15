@@ -16,6 +16,10 @@ public static class ReactForteExtensions
         services.AddNodeJS();
 
         services.Configure<NodeJSProcessOptions>(options => { configureNodeJs?.Invoke(options); });
+        services.Configure<OutOfProcessNodeJSServiceOptions>(options =>
+        {
+            options.Concurrency = Concurrency.MultiProcess;
+        });
         services.AddSingleton<Config>();
         services.AddScoped<IReactService, ReactService>();
         services.AddScoped<IHtmlService, HtmlService>();
