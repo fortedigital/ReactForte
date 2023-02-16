@@ -53,9 +53,10 @@ public static class ReactExtensions
     public static void AddReactForte(this IServiceCollection services, 
         Action<ReactOptions> configureReact,
         Action<NodeJSProcessOptions> configureNodeJs, 
+        Action<OutOfProcessNodeJSServiceOptions> configureOutOfProcessNodeJS,
         ILatencyMetricSender latencyMetricSender)
     {
-        ReactForteExtensions.AddReact(services, configureNodeJs);
+        ReactForteExtensions.AddReact(services, configureNodeJs, configureOutOfProcessNodeJS);
 
         var reactOptions = new ReactOptions();
 

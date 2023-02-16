@@ -11,15 +11,15 @@ namespace ReactForte.Extensions;
 
 public static class ReactForteExtensions
 {
-    public static void AddReact(this IServiceCollection services, Action<NodeJSProcessOptions>? configureNodeJs = null)
+    public static void AddReact(this IServiceCollection services, 
+        Action<NodeJSProcessOptions>? configureNodeJs = null,
+        Action<OutOfProcessNodeJSServiceOptions>? configureOutOfProcessNodeJs = null)
     {
         services.AddNodeJS();
 
         services.Configure<NodeJSProcessOptions>(options => { configureNodeJs?.Invoke(options); });
-        services.Configure<OutOfProcessNodeJSServiceOptions>(options =>
-        {
-            options.Concurrency = Concurrency.MultiProcess;
-        });
+        services.Configure<OutOfProcessNodeJSServiceOptions>(options => { configureOutOfProcessNodeJs?.Invoke(options); });
+
         services.AddSingleton<Config>();
         services.AddScoped<IReactService, ReactService>();
         services.AddScoped<IHtmlService, HtmlService>();
